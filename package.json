@@ -3,14 +3,11 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "dev": "next dev",
     "build": "next build && prisma generate",
     "postbuild": "cp -r .next/static .next/standalone/.next/ || true",
-    "postinstall": "prisma generate",
-    "start": "next start",
-    "lint": "next lint",
     "prsma:push": "prisma db push",
-    "prisma:studio": "prisma studio",
-    "prispa:seed": "prisma db seed"
+    "prisma:studio": "prisma studio"
   },
   "prisma": {
     "seed": "ts-node --compiler-options {\"module\":\"CommonJS\"} prisma/seed.ts"
