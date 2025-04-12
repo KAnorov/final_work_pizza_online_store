@@ -1,17 +1,17 @@
 import { ChooseProductModal } from "@/shared/components/shared";
 import { prisma } from "@/prisma/prisma-client";
 import { notFound } from "next/navigation";
+export const dynamic = 'force-dynamic';
+export default async function ProductPage({ params }: { params: Promise<{ id: string }> }) {
+  const resolvedParams = await params;
+  const id = Number(resolvedParams.id);
 
-interface Props {
-  params: { id: string };
-}
+  if (isNaN(id)) {
+    notFound();
+  }
 
-export default async function ProductPage({ params }: Props) {
-
-  const { id } = await params;
-    
   const product = await prisma.product.findUnique({
-    where: { id: Number(id) },
+    where: { id },
     include: {
       variant: true,
       ingredient: true
@@ -19,12 +19,8 @@ export default async function ProductPage({ params }: Props) {
   });
 
   if (!product) {
-    return notFound();
+    notFound();
   }
 
-  return (
-    
-      <ChooseProductModal product={product} />
-    
-  );
+  return <ChooseProductModal product={product} />;
 }

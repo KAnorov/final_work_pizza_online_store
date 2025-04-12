@@ -15,6 +15,7 @@ interface Props {
     defaultValue?: string;
     onClick?: (value: Variant['value']) => void;
     value?: Variant['value'];
+    selectedValue ?: Variant['value'];
 }
 
 export const GroupVariants: React.FC<Props> = ({ items, onClick, value, className }) => {

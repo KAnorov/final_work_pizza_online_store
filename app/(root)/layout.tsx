@@ -3,7 +3,7 @@ import { Header } from "@/shared/components/shared/header";
 
 
 export const metadata: Metadata = {
-  title: "Next Pizza | Главная ",
+  title: "Pizza Stor | Главная ",
 };
 
 export default function HomeLayout({

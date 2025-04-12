@@ -4,12 +4,12 @@ import { prisma } from "@/prisma/prisma-client";
 import { notFound } from "next/navigation";
 
 interface Props {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }
 
 export default async function ProductPage({ params }: Props) {
 
-  const { id } = await params;
+  const  id  =  params;
     
   const product = await prisma.product.findUnique({
     where: { id: Number(id) },
