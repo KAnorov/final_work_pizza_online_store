@@ -12,10 +12,11 @@ model User {
     id Int @id @default(autoincrement())
 
     fullName String
-    email    String   @unique
+    email    String    @unique
     password String
-    role     UserRole @default(USER)
+    role     UserRole  @default(USER)
     verified DateTime?
+
     provider   String?
     providerId String?
 
@@ -33,13 +34,14 @@ model Product {
     name     String
     imageUrl String
 
+    ingredient Ingredient[]
+    items      ProductItem[]
+
+    category   Category? @relation(fields: [categoryId], references: [id])
+    categoryId Int?
+
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
-
-    variant    ProductItem[]
-    ingredient Ingredient[]
-    category   Category?     @relation(fields: [categoryId], references: [id])
-    categoryId Int?
 }
 
 model ProductItem {
@@ -49,19 +51,19 @@ model ProductItem {
     size      Int?
     pizzaType Int?
 
+    cartItems     CartItem[]
+    
     product   Product?   @relation(fields: [productId], references: [id])
     productId Int?
-    cartItem  CartItem[]
 }
 
 model Category {
     id   Int    @id @default(autoincrement())
     name String @unique
 
-    product Product[]
+    products Product[]
+
 }
-
-
 
 model Ingredient {
     id Int @id @default(autoincrement())
@@ -70,11 +72,11 @@ model Ingredient {
     price    Int
     imageUrl String
 
-    product Product[]
+    products Product[]
 
     createdAt  DateTime  @default(now())
     updatedAt  DateTime  @updatedAt
-    cartItem   CartItem? @relation(fields: [cartItemId], references: [id])
+    items      CartItem? @relation(fields: [cartItemId], references: [id])
     cartItemId Int?
 }
 
@@ -84,11 +86,12 @@ model Cart {
     user   User? @relation(fields: [userId], references: [id])
     userId Int?  @unique
 
+    items CartItem[]
+    
     token String //Выдаем пользователю токен, если пользователь не авторизоввван, для его карзины
 
     totalAmount Int @default(0)
 
-    cartItem CartItem[]
 
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
@@ -105,7 +108,7 @@ model CartItem {
 
     quantity Int @default(1) // Количество элементов в карзине
 
-    ingredient Ingredient[]
+    ingredients Ingredient[]
 
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
@@ -136,13 +139,13 @@ model Order {
 model VerificationCode {
     id Int @id @default(autoincrement())
 
-    user   User? @relation(fields: [userId], references: [id])
-    userId Int   @unique
-    code      String @unique
+    user   User?  @relation(fields: [userId], references: [id])
+    userId Int    @unique
+    code   String @unique
 
     expiresAt DateTime @default(now())
 
-    @@unique([userId,code]) // Группавая проверка на уникальность
+    @@unique([userId, code]) // Группавая проверка на уникальность
 }
 
 enum OrdderStatus {

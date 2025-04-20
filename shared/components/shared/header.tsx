@@ -26,7 +26,7 @@ export const Header: React.FC<Props> = ({ className }) => {
                         <Image src="/logo.png" alt="logo" width={35} height={35} />
                         <div>
                             <h1 className="text-2xl uppercase font-black">Konstantin's pizzeria</h1>
-                            <p className="text-sm text-gray-400 leading-3">вкусно и торчка!</p>
+                            <p className="text-sm text-gray-400 leading-3">вкусно и точка!</p>
                         </div>
                     </div>
                 </Link>

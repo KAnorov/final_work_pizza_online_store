@@ -14,26 +14,28 @@ import { getPizzaDetails } from "@/shared/lib";
 
 interface Props {
     className?: string;
-    name?: string;
+    name: string;
     imgeUrl: string;
     ingredients: Ingredient[];
     items: ProductItem[];
-    onClickAddCart?: VoidFunction;
+    onSubmit: (itemId: number, ingredients: number[]) => void;
 }
 
-export const ChoosePizzaForm: React.FC<Props> = ({ className, name, imgeUrl, ingredients, items, onClickAddCart }) => {
+/** 
+ * Форма для выбора ПИЦЦЫ в корзине.
+*/
+
+export const ChoosePizzaForm: React.FC<Props> = ({ className, name, imgeUrl, ingredients, items, onSubmit }) => {
   
-    const {size, type, selectedIngredients, availableSize, addIngredient, setSize, setType} = usePizzaOptions(items);
+    const {size, type, selectedIngredients, availableSize, addIngredient,currentItemId, setSize, setType} = usePizzaOptions(items);
     const {totalPrice, textDetails} = getPizzaDetails(type, size, items, ingredients, selectedIngredients);
     const handeleClickAdd = () => {
-        onClickAddCart?.();
-        alert(`Вы добавили пиццу ${name} в корзину`);
-        console.log("Вы добавили пиццу в корзину", {
-            size,
-            type,
-            ingredients: selectedIngredients
-        });
-    };
+        if (currentItemId) {
+            onSubmit(currentItemId, Array.from(selectedIngredients) );
+        }
+        
+        };
+    
     
     return <>
         <div className={cn(className, "flex flex-1")}>

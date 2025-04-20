@@ -10,7 +10,7 @@ interface Product {
     id: number;
     name: string;
     imageUrl: string;
-    variant: Array<{ price: number }>;
+    items: Array<{ price: number }>;
 }
 interface Props {
     title: string;
@@ -50,7 +50,7 @@ export const ProductsGroupList: React.FC<Props> = ({
                             id={product.id}
                             name={product.name}
                             imageUrl={product.imageUrl}
-                            price={product.variant[0]?.price ?? 0}
+                            price={product.items[0]?.price ?? 0}
                         />
                     );
                 })}
