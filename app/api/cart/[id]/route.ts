@@ -2,10 +2,11 @@ import { prisma } from "@/prisma/prisma-client";
 import { updateCartTotalAmount } from "@/shared/lib/update-cart-total-amount";
 import { NextRequest } from "next/server";
 
-export async function PATCH(req: NextRequest, { params }: { params: { id: string } }) {
+export async function PATCH(req: NextRequest) {
     try {
-        const { id: paramId } = await params; 
-        const id = Number(paramId); // Получаем ID товара из параметров маршрута
+        const { searchParams } = new URL(req.url);
+        const id = Number(searchParams.get('id'));// Получаем ID товара из параметров маршрута
+        
         if (isNaN(id)) { return new Response(JSON.stringify({ message: "Неверный идентификатор товара" }), { status: 400 }); } // Проверяем, что ID является числом
 
         const data = (await req.json() as { quantity: number }); // Получаем данные из запроса
@@ -34,10 +35,10 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
     }
 }
 
-export async function DELETE(req: NextRequest, { params }: { params: { id: string } }) {
+export async function DELETE(req: NextRequest ) {
     try {
-        const { id: paramId } = await params; 
-        const id = Number(paramId); // Получаем ID товара из параметров маршрута
+        const { searchParams } = new URL(req.url);
+        const id = Number(searchParams.get('id')); // Получаем ID товара из параметров маршрута
         if (isNaN(id)) { return new Response(JSON.stringify({ message: "Неверный идентификатор товара" }), { status: 400 }); } // Проверяем, что ID является числом
 
         const token = req.cookies.get("cartToken")?.value; // Получаем токен авторизации из куки
