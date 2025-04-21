@@ -14,7 +14,7 @@ export default async function ProductPage({ params }: Props) {
   const product = await prisma.product.findUnique({
     where: { id: Number(id) },
     include: {
-      variant: true,
+      items: true,
       ingredient: true
     }
   });
