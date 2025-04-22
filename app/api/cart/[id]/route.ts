@@ -2,13 +2,12 @@ import { prisma } from "@/prisma/prisma-client";
 import { updateCartTotalAmount } from "@/shared/lib/update-cart-total-amount";
 import { NextRequest, NextResponse } from "next/server";
 
-interface RouteParams {
-  params: { id: string };
-}
-
-export async function PATCH(request: NextRequest, { params }: RouteParams) {
+export async function PATCH(
+  request: NextRequest,
+  context: { params: { id: string } }
+) {
   try {
-    const id = parseInt(params.id);
+    const id = Number(context.params.id);
     if (isNaN(id)) {
       return NextResponse.json(
         { error: "Invalid item ID" },
@@ -59,9 +58,12 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
   }
 }
 
-export async function DELETE(request: NextRequest, { params }: RouteParams) {
+export async function DELETE(
+  request: NextRequest,
+  context: { params: { id: string } }
+) {
   try {
-    const id = parseInt(params.id);
+    const id = Number(context.params.id);
     if (isNaN(id)) {
       return NextResponse.json(
         { error: "Invalid item ID" },
