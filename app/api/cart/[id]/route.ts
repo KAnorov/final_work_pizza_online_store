@@ -41,9 +41,10 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
   }
   
 
-  export async function DELETE(req: NextRequest, { params }: { params: { id: string } }) { // DELETE метод для удаления товара из корзины
+  export async function DELETE(req: NextRequest) { // DELETE метод для удаления товара из корзины
     try {
-      const id = Number(params.id);
+        const { searchParams } = new URL(req.url);
+        const id = Number(searchParams.get('id'));
       const token = req.cookies.get('cartToken')?.value;
   
       if (!token) { // Проверяем, что токен авторизации существует
