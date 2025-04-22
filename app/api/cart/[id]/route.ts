@@ -2,12 +2,10 @@ import { prisma } from "@/prisma/prisma-client";
 import { updateCartTotalAmount } from "@/shared/lib/update-cart-total-amount";
 import { NextRequest, NextResponse } from "next/server";
 
-interface RouteParams {
-    params: { id: string };
-  }
-export async function PATCH(req: NextRequest, { params }: RouteParams ) { // PATCH метод для обновления товара в корзине
+
+export async function PATCH(req: NextRequest,  { params }: { params: Promise<{ id: string }> }) { // PATCH метод для обновления товара в корзине
     try {
-      const id = Number(params.id); // Получаем идентификатор товара из параметров запроса
+         // Получаем идентификатор товара из параметров запроса
       const data = (await req.json()) as { quantity: number };// Получаем данные запроса (объект с полем quantity)
       const token = req.cookies.get('cartToken')?.value;// Получаем токен авторизации из куки запроса
   
@@ -17,7 +15,7 @@ export async function PATCH(req: NextRequest, { params }: RouteParams ) { // PAT
   
       const cartItem = await prisma.cartItem.findFirst({ // Проверяем, что корзина существует
         where: {
-          id,
+            id: Number((await params).id) ,
         },
       });
   
@@ -27,7 +25,7 @@ export async function PATCH(req: NextRequest, { params }: RouteParams ) { // PAT
   
       await prisma.cartItem.update({ // Обновляем количество товара в корзине
         where: {
-          id,
+            id: Number((await params).id),
         },
         data: {
           quantity: data.quantity,
@@ -44,9 +42,9 @@ export async function PATCH(req: NextRequest, { params }: RouteParams ) { // PAT
   }
   
 
-  export async function DELETE(req: NextRequest,{ params }: RouteParams) { // DELETE метод для удаления товара из корзины
+  export async function DELETE(req: NextRequest,{ params }: { params: Promise<{ id: string }> }) { // DELETE метод для удаления товара из корзины
     try {
-      const id = Number(params.id);
+        
       const token = req.cookies.get('cartToken')?.value;
   
       if (!token) { // Проверяем, что токен авторизации существует
@@ -55,7 +53,7 @@ export async function PATCH(req: NextRequest, { params }: RouteParams ) { // PAT
   
       const cartItem = await prisma.cartItem.findFirst({
         where: {
-          id,
+          id: Number((await params).id),
         },
       });
   
@@ -65,7 +63,7 @@ export async function PATCH(req: NextRequest, { params }: RouteParams ) { // PAT
   
       await prisma.cartItem.delete({
         where: {
-          id,
+            id: Number((await params).id),
         },
       });
   
