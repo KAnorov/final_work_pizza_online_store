@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { Variant } from "../components/shared/group-variants";
 import { PizzaSize, PizzaType } from "../constants/pizza";
 import { useSet } from "react-use";
@@ -41,7 +41,7 @@ export const usePizzaOptions = (
         }
     }, [type])
 
-    return useMemo(() => ({
+    return {
         size,
         type,
         selectedIngredients,
@@ -50,5 +50,5 @@ export const usePizzaOptions = (
         setSize,
         setType,
         addIngredient
-    }), [type])
+    }
 }
