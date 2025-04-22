@@ -1,13 +1,13 @@
 import { prisma } from "@/prisma/prisma-client";
 import { updateCartTotalAmount } from "@/shared/lib/update-cart-total-amount";
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
 
-export async function PATCH(
-  request: NextRequest,
-  context: { params: { id: string } }
-) {
+export async function PATCH(request: NextRequest) {
   try {
-    const id = Number(context.params.id);
+    const { searchParams } = new URL(request.url);
+    const id = Number(searchParams.get('id'));
+    
     if (isNaN(id)) {
       return NextResponse.json(
         { error: "Invalid item ID" },
@@ -31,10 +31,7 @@ export async function PATCH(
       );
     }
 
-    const existingItem = await prisma.cartItem.findUnique({
-      where: { id }
-    });
-
+    const existingItem = await prisma.cartItem.findUnique({ where: { id } });
     if (!existingItem) {
       return NextResponse.json(
         { error: "Cart item not found" },
@@ -58,12 +55,11 @@ export async function PATCH(
   }
 }
 
-export async function DELETE(
-  request: NextRequest,
-  context: { params: { id: string } }
-) {
+export async function DELETE(request: NextRequest) {
   try {
-    const id = Number(context.params.id);
+    const { searchParams } = new URL(request.url);
+    const id = Number(searchParams.get('id'));
+    
     if (isNaN(id)) {
       return NextResponse.json(
         { error: "Invalid item ID" },
@@ -79,10 +75,7 @@ export async function DELETE(
       );
     }
 
-    const existingItem = await prisma.cartItem.findUnique({
-      where: { id }
-    });
-
+    const existingItem = await prisma.cartItem.findUnique({ where: { id } });
     if (!existingItem) {
       return NextResponse.json(
         { error: "Cart item not found" },
@@ -90,11 +83,9 @@ export async function DELETE(
       );
     }
 
-    await prisma.cartItem.delete({
-      where: { id }
-    });
-
+    await prisma.cartItem.delete({ where: { id } });
     const updatedCart = await updateCartTotalAmount(token);
+    
     return NextResponse.json(updatedCart);
   } catch (error) {
     console.error("[CART_DELETE]", error);
