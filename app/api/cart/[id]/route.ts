@@ -2,9 +2,10 @@ import { prisma } from "@/prisma/prisma-client";
 import { updateCartTotalAmount } from "@/shared/lib/update-cart-total-amount";
 import { NextRequest, NextResponse } from "next/server";
 
-export async function PATCH(req: NextRequest, { params }: { params: { id: string } }) { // PATCH метод для обновления товара в корзине
+export async function PATCH(req: NextRequest) { // PATCH метод для обновления товара в корзине
     try {
-      const id = Number(params.id); // Получаем идентификатор товара из параметров запроса
+        const { searchParams } = new URL(req.url);
+        const id = Number(searchParams.get('id')); // Получаем идентификатор товара из параметров запроса
       const data = (await req.json()) as { quantity: number };// Получаем данные запроса (объект с полем quantity)
       const token = req.cookies.get('cartToken')?.value;// Получаем токен авторизации из куки запроса
   
