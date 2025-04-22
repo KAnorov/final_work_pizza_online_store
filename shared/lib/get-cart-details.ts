@@ -2,7 +2,7 @@ import { CartDTO } from "../services/dto/cart.dto";
 import { calculateCartTotal } from "./calculateCartTotal";
 
 
-export type CartStateItem = {
+export type CartStateItem = { 
   id: number;
   quantity: number;
   name: string;
@@ -21,7 +21,7 @@ interface ReturnProps {
 }
 
 
-export const getCartDetails = (data: CartDTO): ReturnProps => {
+export const getCartDetails = (data: CartDTO): ReturnProps => {//возвращаем общую сумму и товары которые в корзине
   const items = data.items.map((item) => ({
     id: item.id,
     quantity: item.quantity,

@@ -17,6 +17,9 @@ export default async function Home() {
       }
     }
    });
+   if(!categories) {
+      return new Response('404000', {status:404});
+   }
   
   return <>
 

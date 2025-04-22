@@ -14,6 +14,6 @@ export const getPizzaDetails = (
 
     return {
         totalPrice,
-        textDetails: textDetails
+        textDetails
     }
 }
