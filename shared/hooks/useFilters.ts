@@ -1,6 +1,6 @@
 import { useSearchParams } from "next/navigation";
 import { useSet } from "react-use";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 
 interface PriceProps {
     priceForm?: number;
@@ -19,7 +19,7 @@ interface QueryFilters extends PriceProps {
 export interface Filters {
     sizes: Set<string>;
     pizzaTypes: Set<string>;
-    ingredients: Set<string>;
+    selectedIngredients: Set<string>;
     prices: PriceProps;
 }
 
@@ -36,7 +36,7 @@ export const useFilters = (): ReturnProps => {
     const searchParams = useSearchParams() as unknown as Map<keyof QueryFilters, string>;
 
     // Фильтр ингредиентов
-    const [ingredients, { toggle: toggleIngredients }] = useSet(
+    const [selectedIngredients, { toggle: toggleIngredients }] = useSet(
         new Set<string>(searchParams.get('ingredients')?.split(',') || [])
     );
 
@@ -62,14 +62,14 @@ export const useFilters = (): ReturnProps => {
              [name]: value }));
     };
 
-    return {
+    return  useMemo(() => ({
         sizes,
         pizzaTypes,
-        ingredients,
+        selectedIngredients,
         setSelectedIngredients: toggleIngredients,
         prices,
         setPrices: updatePrice,
         setPizzaTypes: togglePizzaTypes,
         setSizes: toggleSizes
-    };
+    }), [sizes, pizzaTypes, selectedIngredients, prices]);
 };

@@ -3,10 +3,10 @@ import { category, ingredients, products, user } from "./constants";
 import { Prisma } from "@prisma/client";
 
 
-const randomNumber = (min: number, max: number) => {
+const randomNumber = (min: number, max: number) => { // Функция для генерации случайного числа в заданном диапазоне от 10 до 1000
     return Math.floor(Math.random() * (max - min) * 10 + min * 10) / 10;
 };
-const generateProductItem = ({
+const generateProductItem = ({ // Функция для создания объекта продукта с параметрами productId, pizzaType и size
     productId,
     pizzaType,
     size,

@@ -14,11 +14,11 @@ type ReturnProps = {
 };
 
 export const useCart = (): ReturnProps => {
-  const cartState = useCartStore((state) => state);
+  const cartState = useCartStore((state) => state); // Получаем все свойства из состояния корзины
 
   useEffect(() => {
-    cartState.fetchCartItems();
-  }, []);
+    cartState.fetchCartItems(); // Вызов функции для получения корзины при монтировании компонента
+  }, []); 
 
   return cartState;
 };

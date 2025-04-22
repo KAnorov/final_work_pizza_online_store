@@ -1,10 +1,10 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Variant } from "../components/shared/group-variants";
 import { PizzaSize, PizzaType } from "../constants/pizza";
 import { useSet } from "react-use";
 import { getAvailablePizzaSizes } from "../lib";
 import { ProductItem } from "@prisma/client";
-import { it } from "node:test";
+
 
 
 interface ReturnProps {
@@ -18,7 +18,7 @@ interface ReturnProps {
     addIngredient: (id: number) => void;
 }
 
-export const usePizzaOptions = (
+export const usePizzaOptions = ( 
     items: ProductItem[] ,
 ) : ReturnProps  => {
 
@@ -41,14 +41,14 @@ export const usePizzaOptions = (
         }
     }, [type])
 
-    return {
+    return useMemo(() => ({
         size,
-        setSize,
         type,
-        setType,
         selectedIngredients,
-        addIngredient,
         availableSize,
-        currentItemId
-    }
+        currentItemId,
+        setSize,
+        setType,
+        addIngredient
+    }), [type])
 }

@@ -12,6 +12,7 @@ import { useEffect } from "react";
 import { PizzaSize, PizzaType } from "@/shared/constants/pizza";
 
 
+
 interface Props {
     className?: string;
 }
@@ -29,7 +30,7 @@ export const CartDrawer: React.FC<React.PropsWithChildren<Props>> = ({ children,
 
     const onClickCountButton = (id: number, quantity: number, type: 'plus' | 'minus') => {
         const newQuantity = type === 'plus' ? quantity + 1 : quantity - 1;
-        console.log(`Кнопка "${type}" была нажата для товара с ID ${id}. Новое количество: ${newQuantity}`);
+               
         updateItemQuantity(id, newQuantity);
        
     };
@@ -41,6 +42,7 @@ export const CartDrawer: React.FC<React.PropsWithChildren<Props>> = ({ children,
                     <SheetTitle>
                         В корзине <span className="font-bold">{items.length} товара</span>
                     </SheetTitle>
+                    
                 </SheetHeader>
 
                 <div className=" overflow-auto scrollbar flex-1">

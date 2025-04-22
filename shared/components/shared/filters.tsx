@@ -11,19 +11,19 @@ interface Props {
 
 }
 
-export const Filters: React.FC<Props> = ({ className }) => {
-    const { ingredients, loading } = useIngredients();
-    const filters = useFilters();
-    const updatePrices = (prices: number[]) => {
-        filters.setPrices('priceForm', prices[0]);
-        filters.setPrices('priceTo', prices[1]);
-    };
+export const Filters: React.FC<Props> = ({ className }) => { 
+    const { ingredients, loading } = useIngredients(); // получаем ингридиенты и статус загрузки
+    const filters = useFilters(); // хук хранит данные о выбранных фильтрах
 
-
-    useQueryFilters(filters);
-
+    useQueryFilters(filters); // передаем данные в хук запросов
     const
         items = ingredients.map(item => ({ value: String(item.id), text: item.name }));
+
+    const updatePrices = (prices: number[]) => { // обновляем цену при изменении значений в поле ввода
+        filters.setPrices('priceForm', prices[0]); // обновляем цену от
+        filters.setPrices('priceTo', prices[1]); // обновляем цену до
+    };
+
 
 
 
@@ -35,7 +35,7 @@ export const Filters: React.FC<Props> = ({ className }) => {
             {/* Верхние чекбоксы */}
 
             <CheckboxFiltersGroup
-                name=""
+                name="pizzaTypes"
                 title="Типы пиццы"
                 className="mb-5"
                 onClickCheckbox={filters.setPizzaTypes}
@@ -80,8 +80,13 @@ export const Filters: React.FC<Props> = ({ className }) => {
                         value={String(filters.prices.priceTo)}
                         onChange={e => filters.setPrices('priceTo', Number(e.target.value))} />
                 </div>
-                <RangeSlider min={0} max={1000} step={10} value={[filters.prices.priceForm || 0, filters.prices.priceTo || 1000]}
-                    onValueChange={updatePrices} />
+                <RangeSlider
+                    min={0}
+                    max={1000}
+                    step={10}
+                    value={[filters.prices.priceForm || 0, filters.prices.priceTo || 1000]}
+                    onValueChange={updatePrices}
+                />
 
 
             </div>
@@ -94,7 +99,7 @@ export const Filters: React.FC<Props> = ({ className }) => {
                 items={items}
                 loading={loading}
                 onClickCheckbox={filters.setSelectedIngredients}
-                selected={filters.ingredients}
+                selected={filters.selectedIngredients}
             />
         </div>
 
