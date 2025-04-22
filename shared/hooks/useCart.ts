@@ -18,7 +18,7 @@ export const useCart = (): ReturnProps => {
 
   useEffect(() => {
     cartState.fetchCartItems(); // Вызов функции для получения корзины при монтировании компонента
-  }, []); 
+  }, []); // Перезагрузка корзины, если состояние корзины изменилось
 
   return cartState;
 };

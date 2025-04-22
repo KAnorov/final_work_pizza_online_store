@@ -39,7 +39,7 @@ export const usePizzaOptions = (
         if (!currentSize && isDisabledSize) {
             setSize(Number(isDisabledSize.value) as PizzaSize);
         }
-    }, [type])
+    }, [type,availableSize, size])
 
     return {
         size,

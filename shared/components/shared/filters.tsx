@@ -70,14 +70,14 @@ export const Filters: React.FC<Props> = ({ className }) => {
                         type="number"
                         placeholder="0"
                         min={0} max={1000}
-                        value={String(filters.prices.priceForm)}
+                        value={String(filters.prices.priceForm ?? "")}
                         onChange={e => filters.setPrices('priceForm', Number(e.target.value))} />
                     <Input
                         type="number"
                         min={100}
                         max={1000}
                         placeholder="1000"
-                        value={String(filters.prices.priceTo)}
+                        value={String(filters.prices.priceTo ?? "")}
                         onChange={e => filters.setPrices('priceTo', Number(e.target.value))} />
                 </div>
                 <RangeSlider
