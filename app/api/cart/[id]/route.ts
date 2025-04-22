@@ -2,78 +2,86 @@ import { prisma } from "@/prisma/prisma-client";
 import { updateCartTotalAmount } from "@/shared/lib/update-cart-total-amount";
 import { NextRequest, NextResponse } from "next/server";
 
-export async function PATCH(req: NextRequest) { // PATCH метод для обновления товара в корзине
+export async function PATCH(
+    req: NextRequest,
+    { params }: { params: { id: string } }
+) {
     try {
-        const { searchParams } = new URL(req.url);
-        const id = Number(searchParams.get('id')); // Получаем идентификатор товара из параметров запроса
-      const data = (await req.json()) as { quantity: number };// Получаем данные запроса (объект с полем quantity)
-      const token = req.cookies.get('cartToken')?.value;// Получаем токен авторизации из куки запроса
-  
-      if (!token) { // Проверяем, что токен авторизации существует
-        return NextResponse.json({ error: 'Cart token not found' });
-      }
-  
-      const cartItem = await prisma.cartItem.findFirst({ // Проверяем, что корзина существует
-        where: {
-          id,
-        },
-      });
-  
-      if (!cartItem) { 
-        return NextResponse.json({ error: 'Cart item not found' });
-      }
-  
-      await prisma.cartItem.update({ // Обновляем количество товара в корзине
-        where: {
-          id,
-        },
-        data: {
-          quantity: data.quantity,// Устанавливаем новое количество товара
-        },
-      });
-  
-      const updatedUserCart = await updateCartTotalAmount(token); // Получаем обновленную корзину пользователя после обновления количество товара
-  
-      return NextResponse.json(updatedUserCart);
-    } catch (error) {
-      console.log('[CART_PATCH] Server error', error);
-      return NextResponse.json({ message: 'Не удалось обновить корзину' }, { status: 500 });
-    }
-  }
-  
+        const id = Number(params.id);
+        const data = await req.json() as { quantity: number };
+        const token = req.cookies.get('cartToken')?.value;
 
-  export async function DELETE(req: NextRequest) { // DELETE метод для удаления товара из корзины
-    try {
-        const { searchParams } = new URL(req.url);
-        const id = Number(searchParams.get('id'));
-      const token = req.cookies.get('cartToken')?.value;
-  
-      if (!token) { // Проверяем, что токен авторизации существует
-        return NextResponse.json({ error: 'Cart token not found' });
-      }
-  
-      const cartItem = await prisma.cartItem.findFirst({
-        where: {
-          id,
-        },
-      });
-  
-      if (!cartItem) { // Проверяем, что корзина существует
-        return NextResponse.json({ error: 'Cart item not found' });
-      }
-  
-      await prisma.cartItem.delete({
-        where: {
-          id,
-        },
-      });
-  
-      const updatedUserCart = await updateCartTotalAmount(token);
-  
-      return NextResponse.json(updatedUserCart);
+        if (!token) {
+            return NextResponse.json(
+                { error: 'Cart token not found' },
+                { status: 401 }
+            );
+        }
+
+        const cartItem = await prisma.cartItem.findFirst({
+            where: { id },
+        });
+
+        if (!cartItem) {
+            return NextResponse.json(
+                { error: 'Cart item not found' },
+                { status: 404 }
+            );
+        }
+
+        await prisma.cartItem.update({
+            where: { id },
+            data: { quantity: data.quantity },
+        });
+
+        const updatedUserCart = await updateCartTotalAmount(token);
+        return NextResponse.json(updatedUserCart);
     } catch (error) {
-      console.log('[CART_DELETE] Server error', error);
-      return NextResponse.json({ message: 'Не удалось удалить корзину' }, { status: 500 });
+        console.error('[CART_PATCH] Server error', error);
+        return NextResponse.json(
+            { message: 'Failed to update cart' },
+            { status: 500 }
+        );
     }
-  }
-  
+}
+
+export async function DELETE(
+    req: NextRequest,
+    { params }: { params: { id: string } }
+) {
+    try {
+        const id = Number(params.id);
+        const token = req.cookies.get('cartToken')?.value;
+
+        if (!token) {
+            return NextResponse.json(
+                { error: 'Cart token not found' },
+                { status: 401 }
+            );
+        }
+
+        const cartItem = await prisma.cartItem.findFirst({
+            where: { id },
+        });
+
+        if (!cartItem) {
+            return NextResponse.json(
+                { error: 'Cart item not found' },
+                { status: 404 }
+            );
+        }
+
+        await prisma.cartItem.delete({
+            where: { id },
+        });
+
+        const updatedUserCart = await updateCartTotalAmount(token);
+        return NextResponse.json(updatedUserCart);
+    } catch (error) {
+        console.error('[CART_DELETE] Server error', error);
+        return NextResponse.json(
+            { message: 'Failed to delete cart item' },
+            { status: 500 }
+        );
+    }
+}

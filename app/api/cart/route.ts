@@ -1,94 +1,125 @@
-
 import { prisma } from "@/prisma/prisma-client";
 import { findOrCreateCart } from "@/shared/lib";
 import { updateCartTotalAmount } from "@/shared/lib/update-cart-total-amount";
 import { CreateCartItemValues } from "@/shared/services/dto/cart.dto";
 import { NextRequest, NextResponse } from "next/server";
 import crypto from 'crypto';
-export async function GET(req: NextRequest) { // получаем корзину пользователя
+
+export async function GET(req: NextRequest) {
     try {
         const token = req.cookies.get("cartToken")?.value;
-        if (!token) return NextResponse.json({ totalAmount: 0, items: [] }), { status: 200 };
-
+        
+        if (!token) {
+            return NextResponse.json(
+                { totalAmount: 0, items: [] },
+                { status: 200 }
+            );
+        }
+        
         const userCart = await prisma.cart.findFirst({
-            where: {
-                OR: [{ token }]
+            where: { 
+                OR: [{ token }] 
             },
             include: {
                 items: {
                     orderBy: { createdAt: "desc" },
                     include: {
-                        productItem: { include: { product: true } },
+                        productItem: { 
+                            include: { 
+                                product: true 
+                            } 
+                        },
                         ingredients: true
                     }
-
                 }
             }
         });
-        return NextResponse.json(userCart);
+        
+        return NextResponse.json(userCart || { totalAmount: 0, items: [] });
     } catch (error) {
-        console.log(error)
-        return NextResponse.json({ error: "error" })
+        console.error('GET /api/cart error:', error);
+        return NextResponse.json(
+            { error: "Internal Server Error" },
+            { status: 500 }
+        );
     }
 }
 
-export async function POST(req: NextRequest) {// добавляем товар в корзину
+export async function POST(req: NextRequest) {
+    let token: string;
     try {
-        let token = req.cookies.get("cartToken")?.value; // получаем токен корзины пользователя из куков
-        if (!token) {
-            token = crypto.randomUUID();// если нет токена создаем новый токен
-            return NextResponse.json(
-                { message: "New cart created" },
-                {
-                    status: 200,
-                    headers: {
-                        'Set-Cookie': `cartToken=${token}; Path=/; HttpOnly`
-                    }
-                }
-            );
+        // Получаем или создаем токен корзины
+        const existingToken = req.cookies.get("cartToken")?.value;
+        
+        if (!existingToken) {
+            token = crypto.randomUUID();
+            // Сразу создаем корзину с новым токеном
+            await findOrCreateCart(token);
+        } else {
+            token = existingToken;
         }
-    
 
-        const userCart = await findOrCreateCart(token); // Получаем или создаем корзину пользователя
-
-    const data = (await req.json()) as CreateCartItemValues;
-
-    const findCartItem = await prisma.cartItem.findFirst({// проверяем есть ли уже такой товар в корзине
-        where: {
-            cartId: userCart.id, // фильтруем по ид корзины и товару
-            productItemId: data.productItemId,// фильтруем по ид товара
-            ingredients: {    // фильтруем по ингредиентам
-                every: {      // проверяем все ингредиенты
-                    id: { in: data.ingredients },
+        // Получаем данные о добавляемом товаре
+        const data = await req.json() as CreateCartItemValues;
+        
+        // Находим корзину пользователя
+        const userCart = await findOrCreateCart(token);
+        
+        // Проверяем, есть ли уже такой товар в корзине
+        const findCartItem = await prisma.cartItem.findFirst({
+            where: {
+                cartId: userCart.id,
+                productItemId: data.productItemId,
+                ingredients: {
+                    every: {
+                        id: { in: data.ingredients },
+                    },
                 },
             },
-        },
-    });
+        });
 
-    // Обновляем количество товара в корзине, если он уже есть в корзине, иначе создаем новый товар в корзине
-    if (findCartItem) {
-        await prisma.cartItem.update({// обновляем количество товара в корзине
-            where: { id: findCartItem.id }, // фильтруем по ид корзины и товара
-            data: { quantity: findCartItem.quantity + 1 }, // увеличиваем количество товара на 1
-        });
-    } else {
-        await prisma.cartItem.create({// создаем новый товар в корзине
-            data: {
-                cartId: userCart.id, // ид корзины
-                productItemId: data.productItemId, // ид товара
-                quantity: 1, // количество товара
-                ingredients: { connect: data.ingredients?.map((id) => ({ id })) }, // связываем ингредиенты с товаром
-            },
-        });
+        // Обновляем или создаем товар в корзине
+        if (findCartItem) {
+            await prisma.cartItem.update({
+                where: { id: findCartItem.id },
+                data: { quantity: findCartItem.quantity + 1 },
+            });
+        } else {
+            await prisma.cartItem.create({
+                data: {
+                    cartId: userCart.id,
+                    productItemId: data.productItemId,
+                    quantity: 1,
+                    ingredients: { 
+                        connect: data.ingredients?.map((id) => ({ id })) 
+                    },
+                },
+            });
+        }
+
+        // Обновляем общую сумму корзины
+        const updatedUserCart = await updateCartTotalAmount(token);
+        
+        // Создаем ответ с обновленной корзиной
+        const response = NextResponse.json(updatedUserCart);
+        
+        // Устанавливаем cookie только если токен новый
+        if (!existingToken) {
+            response.cookies.set('cartToken', token, {
+                path: '/',
+                httpOnly: true,
+                sameSite: 'lax',
+                maxAge: 60 * 60 * 24 * 30 // 30 дней
+            });
+        }
+        
+        return response;
+
+    } catch (error) {
+        console.error('POST /api/cart error:', error);
+        return NextResponse.json(
+            { message: 'Failed to update cart' },
+            { status: 500 }
+        );
     }
-    const updatedUserCart = await updateCartTotalAmount(token); // Обновляем общую сумму корзины
-
-    const resp = NextResponse.json(updatedUserCart); // Отправляем ответ клиенту с обновленной корзиной и токеном корзины
-    resp.cookies.set('cartToken', token);// Устанавливаем куку с обновленным токеном корзины на клиенте
-    return resp;
-
-} catch (error) {
-    console.log(error);
-    return NextResponse.json({ message: 'Не удалось создать корзину' }, { status: 500 })
-}
 }
