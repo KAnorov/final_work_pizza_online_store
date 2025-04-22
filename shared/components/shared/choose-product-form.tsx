@@ -6,19 +6,20 @@ interface Props {
     className?: string;
     name: string;
     price: number;
-    imgeUrl: string;
+    imageUrl: string;
     onSubmit?: VoidFunction;
+    loading?: boolean;
 }
 /**  * Форма для выбора ПРОДУКТА в корзине.*/
 
-export const ChooseProductForm: React.FC<Props> = ({ className, name, imgeUrl, onSubmit, price }) => {
+export const ChooseProductForm: React.FC<Props> = ({ className, name, imageUrl, onSubmit, price, loading }) => {
 
     return <>
         <div className={cn(className, "flex flex-1")}>
 
             <div className="flex items-center justify-center flex-1 relative w-full">
                 <img
-                    src={imgeUrl}
+                    src={imageUrl}
                     alt={name}
                     className="relative left-2 top-2 transition-all z-10 duration-300 w-[400px] h-[400px]"
                 />
@@ -31,10 +32,11 @@ export const ChooseProductForm: React.FC<Props> = ({ className, name, imgeUrl, o
                 
 
                 <Button
-                onClick={onSubmit}
+                loading={loading}
+                onClick={() => onSubmit?.()}
                     className="h-[55px] px-10 text-base rounded-[18px] w-full mt-10"
                 >
-                    Добавить в корзину за {price} рублей.
+                    Добавить в корзину за {price} ₽.
                 </Button>
             </div>
         </div>

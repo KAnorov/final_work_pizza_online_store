@@ -15,9 +15,10 @@ import { getPizzaDetails } from "@/shared/lib";
 interface Props {
     className?: string;
     name: string;
-    imgeUrl: string;
+    imageUrl: string;
     ingredients: Ingredient[];
     items: ProductItem[];
+    loading?: boolean;
     onSubmit: (itemId: number, ingredients: number[]) => void;
 }
 
@@ -25,22 +26,22 @@ interface Props {
  * Форма для выбора ПИЦЦЫ в корзине.
 */
 
-export const ChoosePizzaForm: React.FC<Props> = ({ className, name, imgeUrl, ingredients, items, onSubmit }) => {
-  
-    const {size, type, selectedIngredients, availableSize, addIngredient,currentItemId, setSize, setType} = usePizzaOptions(items);
-    const {totalPrice, textDetails} = getPizzaDetails(type, size, items, ingredients, selectedIngredients);
+export const ChoosePizzaForm: React.FC<Props> = ({ className, name, imageUrl, ingredients, items, loading, onSubmit }) => {
+
+    const { size, type, selectedIngredients, availableSize, addIngredient, currentItemId, setSize, setType } = usePizzaOptions(items);
+    const { totalPrice, textDetails } = getPizzaDetails(type, size, items, ingredients, selectedIngredients);
     const handeleClickAdd = () => {
         if (currentItemId) {
-            onSubmit(currentItemId, Array.from(selectedIngredients) );
+            onSubmit(currentItemId, Array.from(selectedIngredients));
         }
-        
-        };
-    
-    
+
+    };
+
+
     return <>
         <div className={cn(className, "flex flex-1")}>
 
-            <PizzaImage imageUrl={imgeUrl} size={size} />
+            <PizzaImage imageUrl={imageUrl} size={size} />
             <div className="w-[490px] bg-[#f7f6f5] p-7">
                 <Title text={name} size="md" className="font-extrabold mb-1" />
                 <p className="text-gray-400">{textDetails}</p>
@@ -75,10 +76,11 @@ export const ChoosePizzaForm: React.FC<Props> = ({ className, name, imgeUrl, ing
                 </div>
 
                 <Button
+                    loading={loading}
                     className="h-[55px] px-10 text-base rounded-[18px] w-full mt-10"
                     onClick={handeleClickAdd}
                 >
-                    Добавить в корзину за {totalPrice} рублей.
+                    Добавить в корзину за {totalPrice} ₽.
                 </Button>
             </div>
         </div>

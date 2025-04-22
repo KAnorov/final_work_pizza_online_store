@@ -3,24 +3,26 @@ import { GroupVariants } from "@/shared/components/shared/group-variants";
 import { prisma } from "@/prisma/prisma-client";
 import { notFound } from "next/navigation";
 
-interface Props {
-  params: Promise<{ id: string }>;
-}
+export default async function ProductPage({ params }: { params: Promise<{ id: string }> }) {
+  const resolvedParams = await params;
+  const id = Number(resolvedParams.id);
+  
 
-export default async function ProductPage({ params }: Props) {
+  if (isNaN(id)) {
+    notFound();
+  }
 
-  const  id  =  params;
-    
   const product = await prisma.product.findUnique({
-    where: { id: Number(id) },
+    where: { id },
     include: {
+      ingredient: true,
       items: true,
-      ingredient: true
+           
     }
   });
 
   if (!product) {
-    return notFound();
+    notFound();
   }
 
   return (
