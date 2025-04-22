@@ -20,7 +20,7 @@ export const ChooseProductModal: React.FC<Props> = ({ product, className }) => {
     const firstItem = product.items[0];
     const isPizzaForm = Boolean(firstItem.pizzaType);
     const addCartItem = useCartStore((state) => state.addCartItem);
-    
+
     const onAddProduct = () => {
         addCartItem({
             productItemId: firstItem.id,
@@ -42,17 +42,17 @@ export const ChooseProductModal: React.FC<Props> = ({ product, className }) => {
                 {
                     isPizzaForm ? (
                         <ChoosePizzaForm
-                            imgeUrl={product.imageUrl}
+                            imageUrl={product.imageUrl}
                             name={product.name}
                             ingredients={product.ingredient}
                             items={product.items}
                             onSubmit={onAddPizza}
                         />
-                    ) : <ChooseProductForm 
-                    imgeUrl={product.imageUrl} 
-                    name={product.name} 
-                    onSubmit={onAddProduct}
-                    price={firstItem.price}
+                    ) : <ChooseProductForm
+                        imageUrl={product.imageUrl}
+                        name={product.name}
+                        onSubmit={onAddProduct}
+                        price={firstItem.price}
                     />
 
 
