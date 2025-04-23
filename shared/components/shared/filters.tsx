@@ -20,7 +20,7 @@ export const Filters: React.FC<Props> = ({ className }) => {
         items = ingredients.map(item => ({ value: String(item.id), text: item.name }));
 
     const updatePrices = (prices: number[]) => { // обновляем цену при изменении значений в поле ввода
-        filters.setPrices('priceForm', prices[0]); // обновляем цену от
+        filters.setPrices('priceFrom', prices[0]); // обновляем цену от
         filters.setPrices('priceTo', prices[1]); // обновляем цену до
     };
 
@@ -70,8 +70,8 @@ export const Filters: React.FC<Props> = ({ className }) => {
                         type="number"
                         placeholder="0"
                         min={0} max={1000}
-                        value={String(filters.prices.priceForm ?? "")}
-                        onChange={e => filters.setPrices('priceForm', Number(e.target.value))} />
+                        value={String(filters.prices.priceFrom ?? "")}
+                        onChange={e => filters.setPrices('priceFrom', Number(e.target.value))} />
                     <Input
                         type="number"
                         min={100}
@@ -84,7 +84,7 @@ export const Filters: React.FC<Props> = ({ className }) => {
                     min={0}
                     max={1000}
                     step={10}
-                    value={[filters.prices.priceForm || 0, filters.prices.priceTo || 1000]}
+                    value={[filters.prices.priceFrom || 0, filters.prices.priceTo || 1000]}
                     onValueChange={updatePrices}
                 />
 

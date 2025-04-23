@@ -3,7 +3,7 @@ import { useSet } from "react-use";
 import { useMemo, useState } from "react";
 
 interface PriceProps {
-    priceForm?: number;
+    priceFrom?: number;
     priceTo?: number;
 
 }
@@ -52,7 +52,7 @@ export const useFilters = (): ReturnProps => {
 
     // Фильтр стоимости
     const [prices, setPrices] = useState<PriceProps>({
-        priceForm: Number(searchParams.get('priceForm')) || undefined,
+        priceFrom: Number(searchParams.get('priceFrom')) || undefined,
         priceTo: Number(searchParams.get('priceTo')) || undefined,
     });
 
