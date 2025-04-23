@@ -1,4 +1,4 @@
-import { Container} from "@/shared/components/shared"
+import { Container } from "@/shared/components/shared"
 import { prisma } from "@/prisma/prisma-client";
 import { notFound } from "next/navigation";
 import { ProductForm } from "@/shared/components/shared/product-form";
@@ -6,7 +6,7 @@ import { ProductForm } from "@/shared/components/shared/product-form";
 export default async function ProductPage({ params }: { params: Promise<{ id: string }> }) {
   const resolvedParams = await params;
   const id = Number(resolvedParams.id);
-  
+
 
   if (isNaN(id)) {
     notFound();
@@ -16,9 +16,17 @@ export default async function ProductPage({ params }: { params: Promise<{ id: st
     where: { id },
     include: {
       ingredient: true,
+      category: {
+        include: {
+          products: {
+            include: {
+              items: true,
+            },
+          },
+        },
+      },
       items: true,
-           
-    }
+    },
   });
 
   if (!product) {
@@ -30,4 +38,4 @@ export default async function ProductPage({ params }: { params: Promise<{ id: st
       <ProductForm product={product} />
     </Container>
   );
-}
+} 

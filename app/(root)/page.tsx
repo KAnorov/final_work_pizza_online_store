@@ -5,12 +5,12 @@ import { findPizzas, GetSearchParams } from "@/shared/lib/find-pizza";
 
 type PageProps = {
   params: Promise<Record<string, never>>
-  searchParams: Promise<GetSearchParams> 
+  searchParams: Promise<GetSearchParams>
 }
 
-export default  function Home(props: PageProps) {
-  const searchParams =  use(props.searchParams);
-  const categories =  use(findPizzas(searchParams));
+export default function Home(props: PageProps) {
+  const searchParams = use(props.searchParams);
+  const categories = use(findPizzas(searchParams));
 
   if (!categories) {
     return new Response('404', { status: 404 });
@@ -55,5 +55,6 @@ export default  function Home(props: PageProps) {
 
           </div>
         </div>
-      </div></Container></>
+      </div>
+    </Container></>
 }

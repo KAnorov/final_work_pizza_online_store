@@ -15,7 +15,7 @@ interface Props {
 }
 
 export const ProductForm: React.FC<Props> = ({ product, onSubmit: _onSubmit }) => {
-  const addCartItem = useCartStore((state) =>state.addCartItem);
+  const addCartItem = useCartStore((state) => state.addCartItem);
   const loading = useCartStore((state) => state.loading);
 
   const firstItem = product.items[0];
@@ -54,7 +54,7 @@ export const ProductForm: React.FC<Props> = ({ product, onSubmit: _onSubmit }) =
 
   return (
     <ChooseProductForm
-    imageUrl={product.imageUrl}
+      imageUrl={product.imageUrl}
       name={product.name}
       onSubmit={onSubmit}
       price={firstItem.price}

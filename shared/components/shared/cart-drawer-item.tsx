@@ -11,9 +11,9 @@ interface Props extends CartItemProps {
     isLoading?: boolean;
 }
 
-export const CartDrawerItem: React.FC<Props> = ({ className, onClickRemove, imageUrl, name, price, quantity, details, onClickCountButton, isLoading }) => {
+export const CartDrawerItem: React.FC<Props> = ({ className, disabled,onClickRemove, imageUrl, name, price, quantity, details, onClickCountButton, isLoading }) => {
     return <>
-        <div className={cn('flex bg-white p-5 gap-6', className)}>
+        <div className={cn('flex bg-white p-5 gap-6', {'opacity-50 pointer-events-none': disabled} ,className)}>
             <CartItem.Image src={imageUrl} />
 
             <div className="flex-1">

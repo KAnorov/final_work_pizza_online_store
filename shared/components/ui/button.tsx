@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { Slot } from '@radix-ui/react-slot';
 import { cva, type VariantProps } from 'class-variance-authority';
-
 import { cn } from '@/shared/lib/utils';
 import { Loader } from 'lucide-react';
 
@@ -28,7 +27,7 @@ const buttonVariants = cva(
       variant: 'default',
       size: 'default',
     },
-  },
+  }
 );
 
 export interface ButtonProps
@@ -39,19 +38,30 @@ export interface ButtonProps
 }
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ className, variant, size, asChild = false,children, disabled, loading, ...props }, ref) => {
+  ({ className, variant, size, asChild = false, children, disabled, loading, ...props }, ref) => {
     const Comp = asChild ? Slot : 'button';
+    
+    if (process.env.NODE_ENV === 'development') {
+      if (asChild && React.Children.toArray(children).some(
+        child => React.isValidElement(child) && child.type === 'button'
+      )) {
+        console.error("Button cannot wrap another button element");
+      }
+    }
+
     return (
       <Comp
         disabled={disabled || loading}
         className={cn(buttonVariants({ variant, size, className }))}
         ref={ref}
-        {...props}>
+        {...props}
+      >
         {!loading ? children : <Loader className="w-5 h-5 animate-spin" />}
       </Comp>
     );
-  },
+  }
 );
+
 Button.displayName = 'Button';
 
 export { Button, buttonVariants };
