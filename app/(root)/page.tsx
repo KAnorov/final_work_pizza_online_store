@@ -1,9 +1,12 @@
 
 import { Container, Filters, ProductsGroupList, Title, TopBar } from "@/shared/components/shared";
 import { Suspense } from "react";
-import { findPizzas, GetSearchParams } from "@/shared/lib/find-pizza";
+import { findPizzas } from "@/shared/lib/find-pizza";
 
-export default async function Home({ searchParams }: { searchParams: GetSearchParams }) {
+interface PageProps {
+  searchParams: Record<string, string | string[] | undefined>;
+}
+export default async function Home({ searchParams }: PageProps) {
    
   const categories = await  findPizzas(searchParams);
    
@@ -11,11 +14,10 @@ export default async function Home({ searchParams }: { searchParams: GetSearchPa
       return new Response('404', {status:404});
    }
 
-
+   
    const filteredCategories = categories.filter(
     (category) => category.products.length > 0
   );
-  
   return <>
     <Container className="mt-10">
       <Title text="Все пиццы" size="lg" className="font-extrabold" />
@@ -38,16 +40,16 @@ export default async function Home({ searchParams }: { searchParams: GetSearchPa
         <div className="flex-1">
           <div className="flex flex-col gap-16">
          
-         { categories.map(
+         { filteredCategories.map(
             (category) => (
-              category.products.length > 0 && (
+              
                 <ProductsGroupList
                 key={category.id}
                 title={category.name}
                 categoryId={category.id}
                 items={category.products}
                 />
-              )
+              
             )
           )}
          
