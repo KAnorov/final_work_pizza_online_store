@@ -8,30 +8,34 @@ interface Props extends CartItemProps {
     onClickCountButton?: (type: 'plus' | 'minus') => void
     onClickRemove?: () => void
     className?: string;
+    isLoading?: boolean;
 }
 
-export const CartDrawerItem: React.FC<Props> = ({ className, onClickRemove, imageUrl, name, price, quantity, details, onClickCountButton }) => {
+export const CartDrawerItem: React.FC<Props> = ({ className, onClickRemove, imageUrl, name, price, quantity, details, onClickCountButton, isLoading }) => {
     return <>
         <div className={cn('flex bg-white p-5 gap-6', className)}>
-        <CartItem.Image src={imageUrl} />
+            <CartItem.Image src={imageUrl} />
 
-        <div className="flex-1">
-            <CartItem.Info name={name} details={details} />
-            <hr className="mt-3 mb-4" />
+            <div className="flex-1">
+                <CartItem.Info name={name} details={details} />
+                <hr className="mt-3 mb-4" />
 
-            <div className="flex justify-between items-center">
-                <CountButton onClick={onClickCountButton} value={quantity} />
-                <div className="flex items-center gap-3">
-                    <CartItem.Price value={price} />
-                    <Trash2Icon 
-                    onClick={onClickRemove}
-                        className="text-gray-400 cursor-pointer hover:text-gray-600"
-                        size={16}
-                    />
+                <div className="flex justify-between items-center">
+                    <CountButton
+                       isLoading={isLoading}
+                        onClick={onClickCountButton}
+                        value={quantity} />
+                    <div className="flex items-center gap-3">
+                        <CartItem.Price value={price} />
+                        <Trash2Icon
+                            onClick={onClickRemove}
+                            className="text-gray-400 cursor-pointer hover:text-gray-600"
+                            size={16}
+                        />
+                    </div>
                 </div>
-            </div>
 
-        </div>
+            </div>
         </div>
     </>
 }

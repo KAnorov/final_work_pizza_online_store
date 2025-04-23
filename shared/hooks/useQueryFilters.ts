@@ -23,8 +23,6 @@ export const useQueryFilters = (filters: Filters) => { // фильтр по це
         router.push(`?${query}`, { // меняем адресную строку с помощью хука useRouter
           scroll: false, // не прокручиваем страницу после изменения адресной строки
         });
-  
-        console.log(filters, 999); // выводим в консоль объект с параметрами фильтрации
       }
   
       isMounted.current = true; // устанавливаем флаг, что компонент отрендерился

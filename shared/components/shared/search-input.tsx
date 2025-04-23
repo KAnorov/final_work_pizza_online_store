@@ -30,7 +30,7 @@ export const SearchInput = ({ className }: Props) => {
                 const response = await Api.products.search(searchQuery);
                 setProducts(response);
             } catch (error) {
-                console.log(error);
+                console.error(error);
             }
         }, 250, [searchQuery]);
 

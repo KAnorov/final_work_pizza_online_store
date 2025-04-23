@@ -11,7 +11,8 @@ export interface CartState {
     error: boolean;
     totalAmount: number;
     items: CartStateItem[];
-
+    updatingItems: number[];
+    
     /* Получение списка товаров корзины */
     fetchCartItems: () => Promise<void>;
 
@@ -19,24 +20,24 @@ export interface CartState {
     updateItemQuantity: (id: number, quantity: number) => Promise<void>;
 
     /* Добавление товара в корзину */
-    addCartItem: (values: any) => Promise<void>;
+    addCartItem: (values: CreateCartItemValues) => Promise<void>;
 
     /* Удаление товара из корзины */
     removeCartItem: (id: number) => Promise<void>;
 }
 
-export const useCartStore = create<CartState>((set, get) => ({
+export const useCartStore = create<CartState>((set) => ({
     items: [],
     loading: true,
     error: false,
     totalAmount: 0,
+    updatingItems: [],
 
     fetchCartItems: async () => {
         try {
             set({ loading: true, error: false });
             const
                 data = await Api.cart.getCart();
-            console.log("API response data:", data);
             set(getCartDetails(data));
         } catch (error) {
             console.error(error);
