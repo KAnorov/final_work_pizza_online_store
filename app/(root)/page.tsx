@@ -1,21 +1,23 @@
 
 import { Container, Filters, ProductsGroupList, Title, TopBar } from "@/shared/components/shared";
-import { Suspense } from "react";
-import { findPizzas } from "@/shared/lib/find-pizza";
+import { Suspense, use } from "react";
+import { findPizzas, GetSearchParams } from "@/shared/lib/find-pizza";
 
-interface PageProps {
-  searchParams: Record<string, string | string[] | undefined>;
+type PageProps = {
+  params: Promise<Record<string, never>>
+  searchParams: Promise<GetSearchParams> 
 }
-export default async function Home({ searchParams }: PageProps) {
-   
-  const categories = await  findPizzas(searchParams);
-   
-  if(!categories) {
-      return new Response('404', {status:404});
-   }
 
-   
-   const filteredCategories = categories.filter(
+export default  function Home(props: PageProps) {
+  const searchParams =  use(props.searchParams);
+  const categories =  use(findPizzas(searchParams));
+
+  if (!categories) {
+    return new Response('404', { status: 404 });
+  }
+
+
+  const filteredCategories = categories.filter(
     (category) => category.products.length > 0
   );
   return <>
@@ -30,8 +32,8 @@ export default async function Home({ searchParams }: PageProps) {
 
         {/* Фильтрация */}
         <div className="w-[250px]">
-          <Suspense> 
-          <Filters />
+          <Suspense>
+            <Filters />
           </Suspense>
         </div>
 
@@ -39,21 +41,17 @@ export default async function Home({ searchParams }: PageProps) {
         {/* Список товаров */}
         <div className="flex-1">
           <div className="flex flex-col gap-16">
-         
-         { filteredCategories.map(
-            (category) => (
-              
+
+            {filteredCategories.map(
+              (category) => (
                 <ProductsGroupList
-                key={category.id}
-                title={category.name}
-                categoryId={category.id}
-                items={category.products}
+                  key={category.id}
+                  title={category.name}
+                  categoryId={category.id}
+                  items={category.products}
                 />
-              
-            )
-          )}
-         
-           
+              )
+            )}
 
           </div>
         </div>
