@@ -24,7 +24,7 @@ export const SearchInput = ({ className }: Props) => {
 
     useClickAway(ref, () => setFocused(false));
 
-    useDebounce(
+    useDebounce( // вызов функции поиска через 250 мс после ввода символов
         async () => {
             try {
                 const response = await Api.products.search(searchQuery);
@@ -35,11 +35,9 @@ export const SearchInput = ({ className }: Props) => {
         }, 250, [searchQuery]);
 
 
-    const onClickItem = () => {
+    const onClickItem = () => { 
         setFocused(false); // убрать фокус на поиске
         setSearchQuery(''); // очистить поле поиска при выборе товара
-        setProducts([]); // очистить список при выборе товара
-
     };
 
     return <>
@@ -52,7 +50,14 @@ export const SearchInput = ({ className }: Props) => {
                 className="rounded-2xl outline-none w-full bg-gray-100 pl-11"
                 type="text"
                 placeholder="Найти пиццу"
-                onFocus={() => setFocused(true)}
+                onFocus={() => { 
+                    setFocused(true)
+                    if (searchQuery.trim()) {
+                       Api.products.search(searchQuery) 
+                       .then((data) => setProducts(data)) 
+                    }
+                    
+                    ;}}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
             />
@@ -63,7 +68,7 @@ export const SearchInput = ({ className }: Props) => {
 
             )}>
 
-                {products.map((product) => (
+                {products.map((product) => ( // если фокус на поиске то показываем список товаров
                     <Link
                         onClick={onClickItem}
                         key={product.id}
