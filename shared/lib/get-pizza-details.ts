@@ -2,7 +2,7 @@ import { Ingredient, ProductItem } from "@prisma/client"
 import { calcTotalPizzaPrice } from "./calc-total-pizza-price";
 import { mapPizzaType, PizzaSize, PizzaType } from "../constants/pizza";
 
-export const getPizzaDetails = (
+export const getPizzaDetails = ( // получаем информацию о выбранной пицце
     type: PizzaType,
     size: PizzaSize,
     items: ProductItem[],

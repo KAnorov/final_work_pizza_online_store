@@ -18,3 +18,5 @@ export { IngredientItem } from "./ingredient-item";
 export { CartButton } from "./cart-button";
 export { CartDrawer } from "./cart-drawer";
 export { ProfileButton } from "./profile-button";
+export { ClearButton } from "./ClearButton"; 
+export { ErrorText } from "./ErrorText";

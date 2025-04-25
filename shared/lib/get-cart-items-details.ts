@@ -5,15 +5,14 @@ export const getCartItemDetails = (
     ingredients: CartStateItem['ingredients'],
     pizzaType?: PizzaType,
     pizzaSize?: PizzaSize,
-) : string => {
+): string => {
     const details = [];
     if (pizzaSize && pizzaType) {
-     const typeName = mapPizzaType[pizzaType];
-     details.push(`${typeName} ${pizzaSize} см`);
+        const typeName = mapPizzaType[pizzaType];
+        details.push(`${typeName} ${pizzaSize} см`);
     }
     if (ingredients) {
-     // details.push(`Ингредиенты: ${ingredients.map(i => i.name).join(', ')}`);
-     details.push(...ingredients.map(i => i.name));
+        details.push(...ingredients.map(i => i.name));
     }
 
     return details.join(', ');

@@ -1,6 +1,7 @@
 import { prisma } from "./prisma-client";
-import { category, ingredients, products, user } from "./constants";
+import { category, ingredients, products } from "./constants";
 import { Prisma } from "@prisma/client";
+import { hashSync } from "bcrypt";
 
 
 const randomNumber = (min: number, max: number) => { // Функция для генерации случайного числа в заданном диапазоне от 10 до 1000
@@ -26,7 +27,22 @@ const generateProductItem = ({ // Функция для создания объ�
 
 async function up() {
 
-    await prisma.user.createMany({ data: user });
+    await prisma.user.createMany({ data: [
+        {
+            fullName: "Anna",
+            email: "user@project.com",
+            password: hashSync("11111", 10),
+            verified: new Date(),
+            role: 'USER',
+        },
+        {
+            fullName: "Kostya",
+            email: "admin@project.com",
+            password: hashSync("22222", 10),
+            verified: new Date(),
+            role: 'ADMIN',
+        }
+    ] });
     await prisma.category.createMany({ data: category });
     await prisma.ingredient.createMany({ data: ingredients });
     await prisma.product.createMany({ data: products });

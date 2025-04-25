@@ -3,7 +3,7 @@ import { prisma } from "@/prisma/prisma-client";
 
 
 
-export const updateCartTotalAmount = async (token: string) => {
+export const updateCartTotalAmount = async (token: string) => { // здесь мы получаем корзину по токену
     const userCart = await prisma.cart.findFirst({
         where: {
             token,

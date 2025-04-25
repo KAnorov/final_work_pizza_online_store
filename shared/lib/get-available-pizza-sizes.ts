@@ -3,7 +3,7 @@ import { pizzaSizes, PizzaType } from "../constants/pizza";
 import { Variant } from "../components/shared/group-variants";
 
 
-export const getAvailablePizzaSizes = (
+export const getAvailablePizzaSizes = ( // Получаем доступные размеры пиццы
     type: PizzaType,
     items: ProductItem[],
 ) : Variant[] => {

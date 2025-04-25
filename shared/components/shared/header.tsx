@@ -5,6 +5,9 @@ import { Container } from "./container";
 import Image from "next/image";
 import Link from "next/link";
 import { CartButton, ProfileButton, SearchInput } from ".";
+import { useState } from "react";
+import { AuthModal } from "./modals/auth-modal/auth-modal";
+
 
 
 interface Props {
@@ -12,7 +15,8 @@ interface Props {
 }
 
 export const Header: React.FC<Props> = ({ className }) => {
- 
+ const [open, setOpen] = useState(false);
+
     return <>
         <header className={cn('border border-b', className)}>
             <Container className="flex items-center justify-between py-12">
@@ -37,9 +41,12 @@ export const Header: React.FC<Props> = ({ className }) => {
 
                 {/* {Правая часть } */}
                 <div className="flex items-center gap-3">
-                   
+                   <AuthModal
+                    open={open} 
+                    onClose={() => setOpen(false)}
+                   />
                    <ProfileButton
-                  
+                   onClickSignIn={() => setOpen(true)}
                    />
 
                     <CartButton />
