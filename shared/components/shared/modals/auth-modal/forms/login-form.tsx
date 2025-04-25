@@ -5,7 +5,7 @@ import { Title } from '../../../title';
 import { FormInput } from '../../../form';
 import { Button } from '@/shared/components/ui';
 import toast from 'react-hot-toast';
-import { getSession, signIn } from 'next-auth/react';
+import { signIn } from 'next-auth/react';
 import { joiResolver } from '@hookform/resolvers/joi';
 
 interface Props {
