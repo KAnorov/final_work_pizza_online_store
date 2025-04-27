@@ -5,8 +5,6 @@ import { prisma } from "@/prisma/prisma-client";
 import { compare, hashSync } from "bcrypt";
 import { UserRole } from "@prisma/client";
 
-
-
 export const authOptions: AuthOptions = {
   providers: [
     GithubProvider({
@@ -29,20 +27,21 @@ export const authOptions: AuthOptions = {
         password: { label: 'Password', type: 'password' },
       },
       async authorize(credentials) {
-        try {if (!credentials) return null;
-        const values = { email: credentials.email };
-        const findUser = await prisma.user.findFirst({ where: values });
-        if (!findUser) return null;
-        const isValidPassword = await compare(credentials.password, findUser.password);
-        if (!isValidPassword) return null;
-        if (!findUser.verified) return null;
-        return {
-          id: findUser.id,
-          email: findUser.email,
-          name: findUser.fullName,
-          role: findUser.role,
-        };
-            }catch (error) {
+        try {
+          if (!credentials) return null;
+          const values = { email: credentials.email };
+          const findUser = await prisma.user.findFirst({ where: values });
+          if (!findUser) return null;
+          const isValidPassword = await compare(credentials.password, findUser.password);
+          if (!isValidPassword) return null;
+          if (!findUser.verified) return null;
+          return {
+            id: findUser.id,
+            email: findUser.email,
+            name: findUser.fullName,
+            role: findUser.role,
+          };
+        } catch (error) {
           console.error('Authorization error:', error);
           return null;
         }
@@ -53,18 +52,18 @@ export const authOptions: AuthOptions = {
   session: {
     strategy: 'jwt',
   },
+  
   callbacks: {
 
     async signIn({ user, account }) {
       try {
         if (account?.provider == 'credentials') return true;
-        if (!user.email) return false;
 
         const findUser = await prisma.user.findFirst({
           where: {
             OR: [
               { provider: account?.provider, providerId: account?.providerAccountId },
-              { email: user.email }
+              { email: user.email || ''}
             ]
           }
         });
@@ -81,7 +80,7 @@ export const authOptions: AuthOptions = {
         }
         await prisma.user.create({
           data: {
-            email: user.email,
+            email: user.email || '',
             fullName: user.name || 'User #' + user.id,
             password: hashSync(user.id.toString(), 10),
             verified: new Date(),
@@ -102,7 +101,9 @@ export const authOptions: AuthOptions = {
         where: {
           email: token.email,
         },
+        
       });
+      console.log('JWT callback', { token, findUser });
       if (findUser) {
         token.id = String(findUser.id);
         token.email = findUser.email;
@@ -113,6 +114,7 @@ export const authOptions: AuthOptions = {
       return token;
     },
     async session({ session, token }) {
+      console.log('Session callback', { session, token });
       if (session?.user) {
         session.user.id = token.id;
         session.user.role = token.role;
