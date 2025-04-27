@@ -27,12 +27,15 @@ export const updateCartTotalAmount = async (token: string) => { // здесь м
 
     if (!userCart) return 0;
 
-    // const totalAmount = userCart.items.reduce((acc, item) => {
-    //     return acc + calculateCartTotal(item);
-    // }, 0);
-
-    const totalAmount = userCart.items.reduce((acc, item) => {
-        return acc + (item.productItem.price * item.quantity);
+ const validItems = userCart.items.filter(item => item.productItem.product !== null);
+    const totalAmount = validItems.reduce((acc, item) => {
+        return acc + calculateCartTotal({
+            ...item,
+            productItem: {
+                ...item.productItem,
+                product: item.productItem.product!
+            }
+        });
     }, 0);
 
     
